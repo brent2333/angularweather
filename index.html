@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="weatherApp">
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.js"></script>
+    <script src="script.js"></script>
+    <script src="ngAutocomplete.js"></script>
+
+
+</head>
+
+<body ng-controller="global">
+   <!-- <img src="images/{{cond}}.jpg"> -->
+    <div class="contained">
+        <h1>Brent's <img src="images/angular.png"> Weather App</h1>
+    <div id="units">
+    <form>
+    <input type="radio" name="unit" ng-model="units" value="imperial" ng-checked="true" ng-change="unitChange()"> &#176; F&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="unit" value="metric" ng-model="units" ng-change="unitChange()"> &#176; C
+    </form><div id="unitdom">{{units}}</div>
+    </div>
+        <div ng-controller="locSearch">
+
+            <form id="form" role="form">
+
+                <div class="form">
+                    <label for="Autocomplete" id="searchLabel">Find a city</label>
+                    <input type="text" id="Autocomplete" class="form-control" ng-autocomplete="result1" details="details1" options="options1" ng-model="message" ng-blur="doneSearch(message)" ng-click="handleClick(message);" />
+                </div>
+                <div class="result">{{result1}}</div>
+                <div ng-model="data" id="data1">{{data.loc}}</div>
+
+            </form>
+                <div id="noData">
+        <p>No weather data now. Try a search above or <a id="showFav" href=''>show your favorite</a>.</p></div>
+    </div>
+        
+        <div id="content">
+            <div id="currentConditions" class="lead" ng-controller="currentConditions" ng-show="showDetails">
+                <h2>Current Conditions</h2>
+                <h2 id="loc-name">{{ name }}</h2><img id="favbtn" src="images/fav_btn.png">
+                <div ng-show="showDetails">{{ desc }}</div>
+                <div ng-show="showDetails">Temperature: {{ temp }}<span id="main-temp-unit"></span></div>
+
+                <div ng-show="showDetails">Humidity: {{humid}} &#37;</div>
+                <div ng-show="showDetails">Wind: {{wind}} mps</div>
+                <div class="result">{{data.loc}}</div>
+            </div>
+        </div>
+    
+    <div id="five-day" class="clearfix" ng-controller="5dayForecast" ng-show="showDetails">
+            <h2>5 Day Forecast</h2>
+            <div class="five-display" ng-repeat="item in list | limitTo:5"><div class="fore"><img src="http://openweathermap.org/img/w/{{item.weather[0].icon}}.png">&#8595; {{item.temp.min}}<br />&#8593; {{item.temp.max}}</div></div>
+    </div>
+    <div id="intro"><h2>Welcome&#33;</h2><p>This little web application was built with <a href="https://angularjs.org/">Angular JS</a>. It utilizes some of the most useful features of the framework and while it was not terribly time-consuming to create, it demonstrates my grasp of the concepts involved in building such an application using Angular JS. This app uses html5 local storage for saving the user's preferred location in the browser. This product would not be considered ready for release. Optimizations and enhancements related to scalability and performance would be necessary.<span class="disc">**</span><br /><span class="disc">**Note: I have seen occasional data errors inherent in the api service. They are not a result of coding errors on my part.</span></p><p>Data courtesy of <a href="http://openweathermap.org/api">Open Weather Map</a>.</div>
+    <div class="spacer">&nbsp;<br />&nbsp;</div><div class="spacer">&nbsp;<br />&nbsp;</div><div class="spacer">&nbsp;<br />&nbsp;</div><div class="spacer">&nbsp;<br />&nbsp;</div>
+    </div>
+    <script type="text/javascript">
+    $.noConflict();
+    jQuery('document').ready(function() {
+            jQuery('#favbtn').on('click', function() {
+                var favName = jQuery('#loc-name').text();
+                favName = favName.toLowerCase();
+                localStorage["fav"] = favName;
+            });
+    });
+    </script>
+</body>
+
+</html>
