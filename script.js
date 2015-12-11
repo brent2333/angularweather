@@ -15,12 +15,10 @@ app.factory('Data', function($rootScope) {
     else {
        var loc = ''; 
     }
-    //var loc = ''; 
     var cond = '';
     var units = 'imperial';
 
     return {
-
         loc: loc,
         cond: cond,
         units: units
@@ -39,7 +37,6 @@ app.controller("locSearch", function($scope, Data, $rootScope) {
         if($scope.details1.formatted_address){
         selection = $scope.details1.formatted_address.split(',');
         selection = selection[0];
-        console.log(selection);
         $scope.data.loc = selection;
         $rootScope.$broadcast('selection');
     }
@@ -63,9 +60,7 @@ app.controller("currentConditions", function($scope, $http, Data, $rootScope) {
     function getCurr(item, event) {
         $scope.data = Data;
         var loc = $scope.data.loc;
-        console.log(loc);
         var units = $scope.data.units;
-        console.log("scope units "+ $scope.units);
         $scope.showDetails = true;
         var config = {
             method: "get",
@@ -76,17 +71,15 @@ app.controller("currentConditions", function($scope, $http, Data, $rootScope) {
         var responsePromise = $http(config);
 
         responsePromise.success(function(data, status, headers, config) {
-            console.log(data.sys.country);
             $scope.desc = data.weather[0].description;
             $scope.name = data.name.toUpperCase();
             $scope.temp = data.main.temp;
             $scope.humid = data.main.humidity;
             $scope.wind = data.wind.speed;
             $scope.data.cond = data.weather[0].main;
-            console.log('data cond '+ $scope.data.cond);
+            // console.log('data cond '+ $scope.data.cond);
             $rootScope.$broadcast('databack');
 
-            //getConfig();
             jQuery('#five-day').slideDown();
             jQuery('.noData').css('height', '0');
             if (units == 'imperial') {
@@ -99,13 +92,12 @@ app.controller("currentConditions", function($scope, $http, Data, $rootScope) {
 
         });
         responsePromise.error(function(data, status, headers, config) {
-            console.log(status);
+            // console.log(status);
             document.write('bad ajax call');
             jQuery('.noData').show();
         });
     }
 
-    //getCurr();
     $rootScope.$on('selection', function(event, args) {
         getCurr();
         jQuery('#noData').hide();
@@ -113,11 +105,9 @@ app.controller("currentConditions", function($scope, $http, Data, $rootScope) {
     });
     $rootScope.$on('unitchange', function(event, args) {
         getCurr();
-        //alert('units');
     });
     $rootScope.$on('favorite', function(event, args) {
         getCurr();
-        //alert('units');
     });
 
 
@@ -127,9 +117,7 @@ app.controller("5dayForecast", function($scope, $http, Data, $rootScope){
         function getFore(item, event) {
         $scope.data = Data;
         var loc = $scope.data.loc;
-        console.log(loc);
         var units = $scope.data.units;
-        console.log('units in 5 '+ units);
         var config = {
             method: "get",
             url: "http://api.openweathermap.org/data/2.5/forecast/daily?q=" + loc + '&units=' + units+"&cnt=7" + "APPID=6fc54f7a8da9cbe3f68a6ca10d94fb3d",
@@ -142,20 +130,17 @@ app.controller("5dayForecast", function($scope, $http, Data, $rootScope){
             
 
             $scope.list = data.list;
-            console.log($scope.list);
             $scope.fiveShow = true;
             $scope.showDetails = true;
 
 
         });
         foreResponsePromise.error(function(data, status, headers, config) {
-            console.log(status);
-            document.write('bad ajax call');
+            // document.write('bad ajax call');
             jQuery('.noData').show();
         });
     }
 
-    //getFore();
     $rootScope.$on('selection', function(event, args) {
         getFore();
     });
@@ -168,11 +153,9 @@ app.controller("5dayForecast", function($scope, $http, Data, $rootScope){
 });
 app.controller("global", function($scope, $http, Data, $rootScope){
         function getConfig(item, event) {
-        console.log('getConfig');
         $scope.data = Data;
         $scope.unitChange = function() {
             var units = $scope.units;
-            console.log('global units '+$scope.units);
             $scope.data.units = units;
             $rootScope.$broadcast('unitchange');
         }
@@ -193,7 +176,6 @@ app.controller("global", function($scope, $http, Data, $rootScope){
 
     }
 
-    //getConfig();
     $rootScope.$on('databack', function(event, args) {
         getConfig();
     });
